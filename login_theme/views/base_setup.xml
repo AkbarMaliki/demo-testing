@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="hit_res_config_settings_view_form" model="ir.ui.view">
+        <field name="name">hit_res_config_settings_view_form</field>
+        <field name="model">res.config.settings</field>
+        <field name="priority" eval="0"/>
+        <field name="inherit_id" ref="base_setup.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+        	<xpath expr="//div[@id='about']" position="attributes">
+        		<attribute name="invisible">1</attribute>
+           	</xpath>
+        </field>
+   	</record>
+
+   	<template id="web.login_layout" name="Login Layout">
+        <t t-call="web.frontend_layout">
+            <t t-set="html_data" t-value="{'style': 'height: 100%;'}"/>
+            <t t-set="body_classname" t-value="'bg-100'"/>
+            <t t-set="no_header" t-value="True"/>
+            <t t-set="no_footer" t-value="True"/>
+            <div class="container py-5">
+                <div t-attf-class="card border-0 mx-auto bg-100 {{login_card_classes}} o_database_list" style="max-width: 300px;">
+                    <div class="card-holder" >
+                        <div t-attf-class="text-center pb-3 border-bottom {{'mb-3' if form_small else 'mb-4'}}" style="display:none;">
+                            <img t-attf-src="/web/binary/company_logo{{ '?dbname='+db if db else '' }}" alt="Logo" style="max-height:120px; max-width: 100%; width:auto"/>
+                        </div>
+                        <t t-out="0"/>
+                        <div class="text-center small mt-4 pt-3 border-top" t-if="not disable_footer" style="display:none;">
+                            <!--
+                            <t t-if="not disable_database_manager">
+                                <a class="border-end pe-2 me-1" href="/web/database/manager">Manage Databases</a>
+                            </t>
+                            <a href="https://www.odoo.com?utm_source=db&amp;utm_medium=auth" target="_blank">Powered by <span>Odoo</span></a>
+                        	-->
+                        	<!-- <t t-if="not disable_database_manager">
+                                <a class="pe-2 me-1" href="/web/database/manager">Manage Databases</a>
+                            </t> -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+   	<template id="web.login" name="Login">
+        <t t-call="web.login_layout">
+			
+			<div class="row justify-content-center ">
+				<link href="https://fonts.googleapis.com/css2?family=Mooli&amp;family=Quicksand:wght@300..700&amp;family=Roboto+Flex:opsz,wght@8..144,100&amp;display=swap" rel="stylesheet"></link>
+				<style>
+					.breathing-image {
+						max-width: 100%;
+						height: auto;
+						animation: breathing 6s ease-in-out infinite;
+					}
+					@keyframes breathing {
+						0%, 100% {
+							transform: scale(1);
+						}
+						50% {
+							transform: scale(1.05);
+						}
+					}
+
+				</style>
+				<script>
+					setTimeout(() => {
+						document.querySelector('footer').style.display='none';
+					}, 100);
+					document.querySelector('header').style.display='none';
+				</script>
+				<div class="col-sm-8" style="font-family: 'Quicksand', sans-serif;">
+					
+					<div class="px-3 shadow rounded-lg " style="border-radius: 20px;margin-top: 50px;">
+						<form  role="form" t-attf-action="/web/login" method="post" onsubmit="this.action = '/web/login' + location.hash">
+							<input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+							<div class="row">
+								<div class="col-sm-6 p-3 " style="margin-top: 30px;margin-bottom: 30px;">
+									<div style="padding-left:10px;padding-right: 10px;">
+										<div t-attf-class="text-center pb-3 border-bottom {{'mb-3' if form_small else 'mb-4'}} ml-3">
+											<a href="/">
+												<img src="/get/static/images/mainpart.png" alt="Logo" style="max-height:80px; width:auto"/>
+											</a>
+										</div>
+										<div class="mb-3 ml-3">
+											<h3 class="m-0 p-0 text-4xl" style="padding:0;margin:0;">
+												<span class="font-bold text-lg text-blue-600" style="color:#3182CE;font-family: 'Quicksand', sans-serif;">
+													S
+												</span> 
+												<span class="font-bold text-lg text-blue-400" style="color:#63B3ED;font-family: 'Quicksand', sans-serif;">i g n </span>
+												<span class="font-bold text-lg text-red-500" style="color:#F56565;font-family: 'Quicksand', sans-serif;">In</span>
+											</h3>
+
+											<p class="font-semibold text-xs" style="font-weight:bold;margin-top:10px;">Suite Of Services (S.O.S)</p>
+											<!-- <p style="color: #B9B8B8;" class="text-xs">Silahkan masukkan username dan password anda untuk melakukan Log In</p> -->
+										</div>
+										<div class="mb-3 ml-3" t-if="databases and len(databases) &gt; 1">
+											<label for="db" class="col-form-label">Database</label>
+											<div t-attf-class="input-group {{'input-group-sm' if form_small else ''}}">
+												<input type="text" name="db" t-att-value="request.db" id="db" t-attf-class="form-control #{'form-control-sm' if form_small else ''}" required="required" readonly="readonly"/>
+												<a role="button" href="/web/database/selector" class="btn btn-secondary">Select <i class="fa fa-database" role="img" aria-label="Database" title="Database"></i></a>
+											</div>
+										</div>
+				
+										<div class="mb-3 ml-3 field-login pl-3 ">
+											<input type="text" placeholder="Username " style="border-radius: 20px;" name="login" t-att-value="login" id="login" t-attf-class="form-control #{'form-control-sm' if form_small else ''}" required="required" autofocus="autofocus" autocapitalize="off"/>
+										</div>
+				
+										<div class="mb-3 ml-3 pl-3 ">
+											<input type="password" placeholder="Password" style="border-radius: 20px;" name="password" id="password" t-attf-class="form-control #{'form-control-sm' if form_small else ''}" required="required" autocomplete="current-password" t-att-autofocus="'autofocus' if login else None" maxlength="4096"/>
+										</div>
+				
+										<p class="alert alert-danger" t-if="error" role="alert">
+											<t t-esc="error"/>
+										</p>
+										<p class="alert alert-success" t-if="message" role="status">
+											<t t-esc="message"/>
+										</p>
+				
+										<div t-attf-class="clearfix oe_login_buttons text-center gap-1 d-grid mb-1 {{'pt-2' if form_small else 'pt-3'}} ml-3 ">
+											<button type="submit" class="btn btn-primary font-bold" style="border-radius:20px;background: #159168;margin-bottom: 10px;">Log in 
+												<svg  style="fill: rgb(255, 255, 255);display: inline;padding-left:10px;" height="25" width="25"   xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M352 96l64 0c17.7 0 32 14.3 32 32l0 256c0 17.7-14.3 32-32 32l-64 0c-17.7 0-32 14.3-32 32s14.3 32 32 32l64 0c53 0 96-43 96-96l0-256c0-53-43-96-96-96l-64 0c-17.7 0-32 14.3-32 32s14.3 32 32 32zm-9.4 182.6c12.5-12.5 12.5-32.8 0-45.3l-128-128c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L242.7 224 32 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l210.7 0-73.4 73.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l128-128z"/></svg>
+											</button>
+											<!--
+											<t t-if="debug">
+												<button type="submit" name="redirect" value="/web/become" class="btn btn-link btn-sm">Log in as superuser</button>
+											</t>
+											-->
+											<div class="o_login_auth"/>
+										</div>
+										<div class="row justify-content-center">
+											<div class="col-4">
+												<a t-if="reset_password_enabled" t-attf-href="/web/reset_password?{{ keep_query() }}">Lupa Password ?</a>
+											</div>
+										</div>
+										<hr/>
+										<div class="row justify-content-around" style="margin-top:10px;">
+											<div class="col-4">
+												<a href="/web/register" target="__blank">
+													<button type="button" class="btn btn-sm btn-primary font-bold btn-block" style="font-size:12px;background: #155d91;padding:6px;border-radius:20px;width:100%;color:white;" >Register
+														<svg style="fill: rgb(255, 255, 255);display: inline;padding-left:4px;" height="14" width="14" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path d="M0 96l576 0c0-35.3-28.7-64-64-64L64 32C28.7 32 0 60.7 0 96zm0 32L0 416c0 35.3 28.7 64 64 64l448 0c35.3 0 64-28.7 64-64l0-288L0 128zM64 405.3c0-29.5 23.9-53.3 53.3-53.3l117.3 0c29.5 0 53.3 23.9 53.3 53.3c0 5.9-4.8 10.7-10.7 10.7L74.7 416c-5.9 0-10.7-4.8-10.7-10.7zM176 192a64 64 0 1 1 0 128 64 64 0 1 1 0-128zm176 16c0-8.8 7.2-16 16-16l128 0c8.8 0 16 7.2 16 16s-7.2 16-16 16l-128 0c-8.8 0-16-7.2-16-16zm0 64c0-8.8 7.2-16 16-16l128 0c8.8 0 16 7.2 16 16s-7.2 16-16 16l-128 0c-8.8 0-16-7.2-16-16zm0 64c0-8.8 7.2-16 16-16l128 0c8.8 0 16 7.2 16 16s-7.2 16-16 16l-128 0c-8.8 0-16-7.2-16-16z"/></svg>
+													</button>
+												</a>
+											</div>
+											<div class="col-4">
+												<a href="/registration/vendor" target="__blank">
+													<button type="button" class="btn btn-sm  font-bold btn-block" style="font-size:12px;padding:6px;background: #155d91;border-radius:20px;width:100%;color:white;" >Vendor
+														<svg style="fill: rgb(255, 255, 255);display: inline;padding-left:4px;" height="14" width="14" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path d="M512 80c8.8 0 16 7.2 16 16l0 320c0 8.8-7.2 16-16 16L64 432c-8.8 0-16-7.2-16-16L48 96c0-8.8 7.2-16 16-16l448 0zM64 32C28.7 32 0 60.7 0 96L0 416c0 35.3 28.7 64 64 64l448 0c35.3 0 64-28.7 64-64l0-320c0-35.3-28.7-64-64-64L64 32zM208 256a64 64 0 1 0 0-128 64 64 0 1 0 0 128zm-32 32c-44.2 0-80 35.8-80 80c0 8.8 7.2 16 16 16l192 0c8.8 0 16-7.2 16-16c0-44.2-35.8-80-80-80l-64 0zM376 144c-13.3 0-24 10.7-24 24s10.7 24 24 24l80 0c13.3 0 24-10.7 24-24s-10.7-24-24-24l-80 0zm0 96c-13.3 0-24 10.7-24 24s10.7 24 24 24l80 0c13.3 0 24-10.7 24-24s-10.7-24-24-24l-80 0z"/></svg>
+													</button>
+												</a>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="col-sm-6 d-none d-sm-block half_login_background pb-3 pt-3">
+									<!-- <img src="/login_theme/static/src/img/login-2.jpg" class="mt-3" style="width:400px;height:400px;"/> -->
+									<img src="/get/static/images/login10.png" class="mt-3 breathing-image" style="width:400px;height:400px;"/>
+								</div>
+							</div>
+							<input type="hidden" name="redirect" t-att-value="redirect"/>
+						</form>
+					</div>
+
+				</div>
+			</div>
+        </t>
+    </template>
+
+</odoo>

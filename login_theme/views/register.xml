@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+
+    <template id="login_theme.regiter" inherit_id="auth_signup.login" name="Register">
+        <a t-if="signup_enabled" t-attf-href="/web/signup?{{ keep_query() }}" position="replace">
+            <!-- <a t-if="signup_enabled" t-attf-href="/web/register">Daftar Sekarang</a> -->
+        </a>
+        <a t-if="reset_password_enabled" t-attf-href="/web/reset_password?{{ keep_query() }}" position="replace">
+            <!-- <a t-if="reset_password_enabled" t-attf-href="/web/reset_password?{{ keep_query() }}">Lupa Password ?</a> -->
+        </a>
+    </template>
+    
+</odoo>

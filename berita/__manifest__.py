@@ -1,0 +1,20 @@
+{
+    "name": "Berita",
+    "version": "18.0.1.0.0",
+    "category": "News",
+    "summary": "Berita",
+    "description": """Berita""",
+    "author": "Maliki",
+    "company": "Maliki",
+    "maintainer": "Maliki",
+    "website": "",
+    "depends": ["web", "website_blog"],
+    "data": [
+        "security/ir.model.access.csv",
+        # "views/base_menus.xml",
+    ],
+    "license": "LGPL-3",
+    "installable": True,
+    "auto_install": False,
+    "application": False,
+}
