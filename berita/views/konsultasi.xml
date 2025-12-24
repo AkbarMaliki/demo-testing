@@ -1,0 +1,51 @@
+<odoo>
+    <record id="view_konsultasi_data_tree" model="ir.ui.view">
+        <field name="name">konsultasi.data.tree</field>
+        <field name="model">konsultasi.data</field>
+        <field name="arch" type="xml">
+            <list string="Konsultasi List">
+                <field name="name"/>
+                <field name="penanya"/>
+                <field name="email"/>
+                <field name="handphone"/>
+                <field name="alamat"/>
+                <field name="isi_pesan"/>
+                <field name="tanggal"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_konsultasi_data_form" model="ir.ui.view">
+        <field name="name">konsultasi.data.form</field>
+        <field name="model">konsultasi.data</field>
+        <field name="arch" type="xml">
+            <form string="Konsultasi">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="penanya"/>
+                        <field name="email"/>
+                        <field name="handphone"/>
+                        <field name="alamat"/>
+                        <field name="isi_pesan"/>
+                        <field name="tanggal"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_konsultasi_data" model="ir.actions.act_window">
+        <field name="name">Konsultasi</field>
+        <field name="res_model">konsultasi.data</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_id" ref="view_konsultasi_data_tree"/>
+    </record>
+
+    <menuitem id="menu_konsultasi_root" name="Konsultasi"/>
+
+    <menuitem id="menu_konsultasi_data"
+              name="Konsultasi Data"
+              parent="menu_konsultasi_root"
+              action="action_konsultasi_data"/>
+</odoo>

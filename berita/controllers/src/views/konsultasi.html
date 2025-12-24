@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <title>Form Konsultasi</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #f8f9fa;
+    }
+    .konsultasi-section {
+      background: #fff;
+      box-shadow: 0 0 1px #d7d9dd, 0px 2px 9px #f1f2f6;
+      border-radius: 10px;
+      padding: 32px 24px 20px 24px;
+      box-sizing: border-box;
+      max-width: 540px;
+      margin: 38px auto 0 auto;
+      min-width: 0;
+    }
+    .konsultasi-header {
+      background: #079b62;
+      color: #fff;
+      font-weight: 600;
+      font-size: 22px;
+      padding: 8px 30px 8px 18px;
+      border-radius: 3px;
+      letter-spacing: 0.6px;
+      display: inline-block;
+      margin-bottom: 19px;
+    }
+    label.required:after {
+      content: "*";
+      color: #d96060;
+      margin-left: 4px;
+      font-weight: 700;
+    }
+    .alert {
+      margin-top: 15px;
+    }
+    .form-control:disabled, .form-control:read-only {
+      background-color: #e9ecef;
+      color: #79818a;
+    }
+    @media (max-width: 620px) {
+      .konsultasi-section {
+        border-radius: 0;
+        max-width: 98vw;
+        padding: 17px 7vw 18px 7vw;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div id="app">
+    <div class="konsultasi-section">
+      <div class="konsultasi-header mb-4">Form Input</div>
+      <form @submit.prevent="submitForm">
+        <div class="mb-3">
+          <label class="form-label required" for="penanya">Nama Anda</label>
+          <input v-model="form.penanya" class="form-control" type="text" id="penanya" placeholder="Nama anda" :disabled="submitting" required />
+        </div>
+        <div class="mb-3">
+          <label class="form-label" for="email">Email</label>
+          <input v-model="form.email" class="form-control" type="email" id="email" placeholder="opsional: email@anda.com" :disabled="submitting" />
+        </div>
+        <div class="mb-3">
+          <label class="form-label" for="handphone">Handphone</label>
+          <input v-model="form.handphone" class="form-control" type="number" id="handphone"  />
+        </div>
+        <div class="mb-3">
+          <label class="form-label" for="alamat">Alamat</label>
+          <input v-model="form.alamat" class="form-control" type="text" id="alamat" placeholder="opsional: alamat anda" :disabled="submitting" />
+        </div>
+        <div class="mb-3">
+          <label class="form-label required" for="isi_pesan">Isi Pesan</label>
+          <textarea v-model="form.isi_pesan" class="form-control" id="isi_pesan" rows="4" placeholder="Tulis pertanyaan atau konsultasi anda di sini..." :disabled="submitting" required></textarea>
+        </div>
+        <div class="mb-3">
+          <label class="form-label" for="title">Judul (opsional)</label>
+          <input v-model="form.title" class="form-control" type="text" id="title" placeholder="Judul konsultasi (tidak wajib)" :disabled="submitting" />
+        </div>
+        <button type="submit" class="btn btn-success px-4" :disabled="submitting">Kirim pertanyaan</button>
+      </form>
+      <div v-if="successMsg" class="alert alert-success" role="alert">{{ successMsg }}</div>
+      <div v-if="errorMsg" class="alert alert-danger" role="alert">{{ errorMsg }}</div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <script>
+    const { createApp } = Vue;
+
+    createApp({
+      data() {
+        return {
+          form: {
+            penanya: '',
+            email: '',
+            alamat: '',
+            handphone: '',
+            isi_pesan: '',
+            title: ''
+          },
+          submitting: false,
+          successMsg: '',
+          errorMsg: ''
+        }
+      },
+      methods: {
+        async submitForm() {
+          this.successMsg = '';
+          this.errorMsg = '';
+          this.submitting = true;
+
+          // Validasi dasar
+          if (!this.form.penanya || !this.form.isi_pesan) {
+            this.errorMsg = "Nama Penanya dan Isi Pesan harus diisi.";
+            this.submitting = false;
+            return;
+          }
+          try {
+            const response = await fetch('/api/v1/konsultasi', {
+              method: 'POST',
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(this.form)
+            });
+
+            const json = await response.json();
+
+            if (json && json.success) {
+              this.successMsg = json.message || "Konsultasi berhasil dikirim.";
+              this.errorMsg = '';
+              // Bersihkan form
+              this.form.penanya = '';
+              this.form.email = '';
+              this.form.alamat = '';
+              this.form.handphone = '';
+              this.form.isi_pesan = '';
+              this.form.title = '';
+            } else {
+              this.errorMsg = (json && json.error) ? json.error : "Gagal mengirim konsultasi.";
+            }
+          } catch (err) {
+            this.errorMsg = "Terjadi kesalahan jaringan/server. Silakan coba lagi.";
+          }
+          this.submitting = false;
+        }
+      }
+    }).mount('#app');
+  </script>
+</body>
+</html>

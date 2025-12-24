@@ -13,7 +13,9 @@ import re
 from datetime import datetime
 _logger = logging.getLogger(__name__)
 
-
+import json
+from odoo.http import request, Response
+from datetime import date
 class BeritaController(http.Controller):
     @http.route("/news/feed", auth="public", methods=["GET"], csrf=False)
     def berita_news_feed(self, **params):
@@ -21,6 +23,17 @@ class BeritaController(http.Controller):
         src_path = os.path.join(module_path, "src")
         with open(
             os.path.join(src_path, "views", 'index.html'), "r", encoding="utf-8"
+        ) as file:
+            body = file.read()
+        html_content = body
+        return html_content
+
+    @http.route("/konsultasi", auth="public", methods=["GET"], csrf=False)
+    def konsultasi_web(self, **params):
+        module_path = os.path.dirname(os.path.realpath(__file__))
+        src_path = os.path.join(module_path, "src")
+        with open(
+            os.path.join(src_path, "views", 'konsultasi.html'), "r", encoding="utf-8"
         ) as file:
             body = file.read()
         html_content = body
@@ -278,9 +291,7 @@ class BeritaController(http.Controller):
         Create komentar for a blog post.
         Required: blog_id, pembuat, email, comment, (optional: name)
         """
-        import json
-        from odoo.http import request, Response
-        from datetime import date
+
 
         # Periksa apakah request Content-Type 'application/json' dan jika iya, baca dari body
         if request.httprequest.content_type == 'application/json':
@@ -396,3 +407,71 @@ class BeritaController(http.Controller):
 
 
 
+
+
+    # API GET: Ambil semua data konsultasi
+    @http.route('/api/v1/konsultasi', auth="public", methods=["GET"], csrf=False)
+    def api_get_konsultasi(self, **params):
+        records = request.env['konsultasi.data'].sudo().search([], order="id desc")
+        result = []
+        for rec in records:
+            result.append({
+                "id": rec.id,
+                "title": rec.name,
+                "penanya": rec.penanya,
+                "email": rec.email,
+                "alamat": rec.alamat,
+                "isi_pesan": rec.isi_pesan,
+                "tanggal": rec.tanggal,
+                "handphone": rec.handphone,
+            })
+        response_data = {
+            "data": result,
+            "count": len(result)
+        }
+        return Response(
+            json.dumps(response_data, ensure_ascii=False),
+            content_type="application/json;charset=utf-8",
+            status=200,
+        )
+
+    # API POST: Buat entri konsultasi baru
+    @http.route('/api/v1/konsultasi',  auth="public", methods=["POST"], csrf=False)
+    def api_post_konsultasi(self, **params):
+        required_fields = ["penanya", "isi_pesan"]
+        data = params if params else {}
+        if not data and request.httprequest.data:
+            try:
+                data = json.loads(request.httprequest.data.decode("utf-8"))
+            except Exception:
+                data = {}
+        missing = [f for f in required_fields if not data.get(f)]
+        if missing:
+            response_data = {
+                "error": "Field berikut harus diisi: %s" % ", ".join(missing)
+            }
+            return Response(
+                json.dumps(response_data, ensure_ascii=False),
+                content_type="application/json;charset=utf-8",
+                status=200,
+            )
+
+        new_rec = request.env['konsultasi.data'].sudo().create({
+            "name": data.get("title") or "",
+            "penanya": data.get("penanya"),
+            "email": data.get("email") or "",
+            "alamat": data.get("alamat") or "",
+            "isi_pesan": data.get("isi_pesan"),
+            "tanggal": data.get("tanggal") or "",
+            "handphone": data.get("handphone") or "",
+        })
+        response_data = {
+            "success": True,
+            "id": new_rec.id,
+            "message": "Konsultasi berhasil dikirim.",
+        }
+        return Response(
+            json.dumps(response_data, ensure_ascii=False),
+            content_type="application/json;charset=utf-8",
+            status=200,
+        )

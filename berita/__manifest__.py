@@ -11,7 +11,7 @@
     "depends": ["web", "website_blog"],
     "data": [
         "security/ir.model.access.csv",
-        # "views/base_menus.xml",
+        "views/konsultasi.xml",
     ],
     "license": "LGPL-3",
     "installable": True,
